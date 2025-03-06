@@ -1,0 +1,49 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:h2:mem:test;MODE=MySQL;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true  # H2 콘솔 활성화 (http://localhost:8080/h2-console)
+      settings:
+        web-allow-others: true
+  jpa:
+    hibernate:
+      ddl-auto: create  # 애플리케이션이 시작될 때 DB 스키마를 자동으로 업데이트
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect  # H2에 맞는 Hibernate dialect 설정
+    show-sql: true
+    defer-datasource-initialization: true
+  sql:
+    init:
+      data-locations: classpath:properties/*.sql
+      mode: always
+
+---
+spring:
+  config:
+    activate:
+      on-profile:
+        - dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/auction
+    username: auction
+    password: auction
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
