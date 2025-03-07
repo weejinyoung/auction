@@ -1,4 +1,4 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.persistence;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

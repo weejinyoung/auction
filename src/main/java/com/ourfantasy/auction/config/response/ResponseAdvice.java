@@ -1,4 +1,4 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.response;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.data.domain.Page;

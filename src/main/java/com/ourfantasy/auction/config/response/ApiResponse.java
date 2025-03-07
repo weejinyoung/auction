@@ -1,4 +1,4 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.response;
 
 import lombok.Getter;
 

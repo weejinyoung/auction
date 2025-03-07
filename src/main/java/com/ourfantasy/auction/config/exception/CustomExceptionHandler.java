@@ -1,5 +1,7 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.exception;
 
+import com.ourfantasy.auction.config.response.ApiResponse;
+import com.ourfantasy.auction.config.response.ResponseCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

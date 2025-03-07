@@ -1,4 +1,4 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

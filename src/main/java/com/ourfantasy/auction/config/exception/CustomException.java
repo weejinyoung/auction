@@ -1,5 +1,6 @@
-package com.ourfantasy.auction.config;
+package com.ourfantasy.auction.config.exception;
 
+import com.ourfantasy.auction.config.response.ResponseCode;
 import lombok.Getter;
 
 @Getter

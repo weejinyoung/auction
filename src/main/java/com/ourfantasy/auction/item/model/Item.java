@@ -1,13 +1,10 @@
-package com.ourfantasy.auction.item;
+package com.ourfantasy.auction.item.model;
 
-import com.ourfantasy.auction.config.BaseTimeEntity;
-import com.ourfantasy.auction.user.User;
+import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
+import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "item")
@@ -22,7 +19,9 @@ public class Item extends BaseTimeEntity {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String detail;
 }
