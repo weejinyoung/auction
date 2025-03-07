@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Auction", description = "Auction API")
-@RestController("/auction")
+@RestController("/api/v1/auction")
 @RequiredArgsConstructor
 public class AuctionController {
 
@@ -31,3 +31,4 @@ public class AuctionController {
         return auctionService.bid(auctionId, request);
     }
 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
