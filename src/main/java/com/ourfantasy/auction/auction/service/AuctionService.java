@@ -1,6 +1,7 @@
 package com.ourfantasy.auction.auction.service;
 
 import com.ourfantasy.auction.auction.event.BidPlacedEvent;
+import com.ourfantasy.auction.auction.event.FinalizeSuccessfulBidEvent;
 import com.ourfantasy.auction.auction.model.Auction;
 import com.ourfantasy.auction.auction.model.Bidding;
 import com.ourfantasy.auction.auction.model.SuccessfulBidding;
@@ -62,7 +63,7 @@ public class AuctionService {
         auction.completeAuction();
         SuccessfulBidding successfulBidding = SuccessfulBidding.createSuccessfulBidding(auction, successfulBid);
         successfulBiddingRepository.save(successfulBidding);
-        eventPublisher.publishEvent(new BidPlacedEvent(auction, successfulBid));
+        eventPublisher.publishEvent(new FinalizeSuccessfulBidEvent(auction, successfulBid));
         return FinalizeSuccessfulBidResponse.from(auction, successfulBid);
     }
 }

@@ -23,7 +23,7 @@ public class BidEventListener {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleFinalizeSuccessfulBid(BidPlacedEvent event) throws InterruptedException {
+    public void handleFinalizeSuccessfulBid(FinalizeSuccessfulBidEvent event) throws InterruptedException {
         Thread.sleep(300);
         log.info("Finalize Successful Bid Event: {}", event);
         // TODO 경매 주최자에게 알림
