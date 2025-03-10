@@ -1,4 +1,4 @@
-package com.ourfantasy.auction;
+package com.ourfantasy.auction.auction;
 
 import com.ourfantasy.auction.auction.model.Auction;
 import com.ourfantasy.auction.auction.model.AuctionStatus;

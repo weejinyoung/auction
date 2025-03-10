@@ -3,13 +3,14 @@ package com.ourfantasy.auction.item.model;
 import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
 import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "item")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,4 +25,14 @@ public class Item extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String detail;
+
+    private Item(User owner, String name, String detail) {
+        this.owner = owner;
+        this.name = name;
+        this.detail = detail;
+    }
+
+    public static Item createItem(User owner, String name, String detail) {
+        return new Item(owner, name, detail);
+    }
 }

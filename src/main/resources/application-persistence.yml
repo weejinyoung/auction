@@ -15,12 +15,12 @@ spring:
         web-allow-others: true
   jpa:
     hibernate:
-      ddl-auto: create  # 애플리케이션이 시작될 때 DB 스키마를 자동으로 업데이트
+      ddl-auto: create
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect  # H2에 맞는 Hibernate dialect 설정
     show-sql: true
     defer-datasource-initialization: true
+    open-in-view: false
   sql:
     init:
       data-locations: classpath:properties/*.sql
@@ -35,15 +35,15 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/auction
-    username: auction
-    password: auction
+    url: jdbc:mysql://localhost:3306/auction-db
+    username: auction-user
+    password: auction-password
 
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         format_sql: true
         show_sql: true
+    open-in-view: false

@@ -1,8 +1,6 @@
 server:
   port: 8080
   shutdown: graceful
-#  servlet:
-#    context-path: /api/v1
 
 springdoc:
   swagger-ui:
@@ -16,7 +14,7 @@ spring:
   application:
     name: auction-api
   profiles:
-    active: test
+    active: dev
     include:
       - persistence
   jackson:
@@ -33,4 +31,3 @@ spring:
   config:
     activate:
       on-profile: dev
----
