@@ -1,6 +1,6 @@
 package com.ourfantasy.auction.auction.service.dto;
 
-public record FinalizeSuccessfulBidRequest(
+public record AcceptBiddingRequest(
         Long biddingId
 ) {
 }

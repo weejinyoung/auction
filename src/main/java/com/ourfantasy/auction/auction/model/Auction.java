@@ -55,12 +55,12 @@ public class Auction extends BaseTimeEntity {
         this.status = AuctionStatus.ACTIVE;
     }
 
-    public static Auction openAuction(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
-        validateAuctionOpening(cosigner, item, startingPrice, minimumBidIncrement, closingTime);
+    public static Auction createAuction(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
+        validateAuctionCreating(cosigner, item, startingPrice, minimumBidIncrement, closingTime);
         return new Auction(cosigner, item, startingPrice, minimumBidIncrement, closingTime);
     }
 
-    private static void validateAuctionOpening(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
+    private static void validateAuctionCreating(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
         if (cosigner.isInactive()) {
             throw new CustomException(ResponseCode.AUCTION_INACTIVE_USER);
         }
@@ -86,7 +86,7 @@ public class Auction extends BaseTimeEntity {
         return this.status != AuctionStatus.ACTIVE || this.closingAt.isBefore(LocalDateTime.now());
     }
 
-    public Bidding placeBid(User bidder, Long bidPrice) {
+    public Bidding bid(User bidder, Long bidPrice) {
         validateBid(bidder, bidPrice);
         this.highestBidPrice = bidPrice;
         return new Bidding(this, bidder, bidPrice);
@@ -107,7 +107,7 @@ public class Auction extends BaseTimeEntity {
         }
     }
 
-    public void completeAuction() {
+    public void complete() {
         this.status = AuctionStatus.COMPLETED;
     }
 }

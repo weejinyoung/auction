@@ -1,13 +1,11 @@
 package com.ourfantasy.auction.auction.service;
 
 import com.ourfantasy.auction.auction.event.BidPlacedEvent;
-import com.ourfantasy.auction.auction.event.FinalizeSuccessfulBidEvent;
+import com.ourfantasy.auction.auction.event.AcceptBiddingEvent;
 import com.ourfantasy.auction.auction.model.Auction;
 import com.ourfantasy.auction.auction.model.Bidding;
 import com.ourfantasy.auction.auction.model.SuccessfulBidding;
-import com.ourfantasy.auction.auction.repository.AuctionRepository;
-import com.ourfantasy.auction.auction.repository.BiddingRepository;
-import com.ourfantasy.auction.auction.repository.SuccessfulBiddingRepository;
+import com.ourfantasy.auction.auction.repository.*;
 import com.ourfantasy.auction.auction.service.dto.*;
 import com.ourfantasy.auction.config.exception.CustomException;
 import com.ourfantasy.auction.config.response.ResponseCode;
@@ -17,6 +15,8 @@ import com.ourfantasy.auction.user.model.User;
 import com.ourfantasy.auction.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
+    private final AuctionCustomRepository auctionCustomRepository;
     private final BiddingRepository biddingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
@@ -37,33 +38,39 @@ public class AuctionService {
                 .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
         Item item = itemRepository.findById(request.itemId())
                         .orElseThrow(() -> new CustomException(ResponseCode.ITEM_NOT_FOUND));
-        Auction auction = Auction.openAuction(cosigner, item, request.startingPrice(), request.minimumBidIncrement(), request.closingAt());
-        auctionRepository.save(auction);
-        return OpenAuctionResponse.from(auction);
+        Auction newAuction = Auction.createAuction(cosigner, item, request.startingPrice(), request.minimumBidIncrement(), request.closingAt());
+        Auction savedAuction = auctionRepository.save(newAuction);
+        return OpenAuctionResponse.from(savedAuction);
     }
 
     @Transactional
     public BidResponse bid(Long auctionId, BidRequest request) {
-        Auction auction = auctionRepository.findById(auctionId)
+        Auction auctionToBid = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new CustomException(ResponseCode.AUCTION_NOT_FOUND));
         User bidder = userRepository.findById(request.bidderId())
                 .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
-        Bidding bidding = auction.placeBid(bidder, request.bidPrice());
-        biddingRepository.save(bidding);
-        eventPublisher.publishEvent(new BidPlacedEvent(auction, bidding));
-        return BidResponse.from(auction, bidding);
+        Bidding newBidding = auctionToBid.bid(bidder, request.bidPrice());
+        Bidding savedBidding = biddingRepository.save(newBidding);
+        eventPublisher.publishEvent(new BidPlacedEvent(auctionToBid, savedBidding));
+        return BidResponse.from(auctionToBid, savedBidding);
     }
 
     @Transactional
-    public FinalizeSuccessfulBidResponse finalizeSuccessfulBid(Long auctionId, FinalizeSuccessfulBidRequest request) {
-        Auction auction = auctionRepository.findById(auctionId)
+    public AcceptBiddingResponse acceptBidding(Long auctionId, AcceptBiddingRequest request) {
+        Auction auctionToComplete = auctionRepository.findById(auctionId)
                 .orElseThrow(() -> new CustomException(ResponseCode.AUCTION_NOT_FOUND));
-        Bidding successfulBid = biddingRepository.findById(request.biddingId())
+        Bidding biddingToAccept = biddingRepository.findById(request.biddingId())
                 .orElseThrow(() -> new CustomException(ResponseCode.BID_NOT_FOUND));
-        auction.completeAuction();
-        SuccessfulBidding successfulBidding = SuccessfulBidding.createSuccessfulBidding(auction, successfulBid);
+        auctionToComplete.complete();
+        SuccessfulBidding successfulBidding = SuccessfulBidding.createSuccessfulBidding(auctionToComplete, biddingToAccept);
         successfulBiddingRepository.save(successfulBidding);
-        eventPublisher.publishEvent(new FinalizeSuccessfulBidEvent(auction, successfulBid));
-        return FinalizeSuccessfulBidResponse.from(auction, successfulBid);
+        eventPublisher.publishEvent(new AcceptBiddingEvent(auctionToComplete, biddingToAccept));
+        return AcceptBiddingResponse.from(auctionToComplete, biddingToAccept);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetAuctionResponse> getLatestOpenedAuctions(Pageable pageable) {
+        return auctionCustomRepository.findRecentActiveAuctionsWithItem(pageable)
+                .map(GetAuctionResponse::from);
     }
 }

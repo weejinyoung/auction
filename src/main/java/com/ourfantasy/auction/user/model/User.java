@@ -33,12 +33,12 @@ public class User extends BaseTimeEntity {
         this.status = UserStatus.ACTIVE;
     }
 
-    public static User registerNewUser(String nickname, String email) {
-        validateRegisterNewUser(email, nickname);
+    public static User createUser(String nickname, String email) {
+        validateUserCreating(email, nickname);
         return new User(nickname, email);
     }
 
-    private static void validateRegisterNewUser(String email, String nickname) {
+    private static void validateUserCreating(String email, String nickname) {
         if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
             throw new CustomException(ResponseCode.INVALID_EMAIL);
         }
