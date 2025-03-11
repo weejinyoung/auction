@@ -31,7 +31,7 @@ public class UserDataInitializerByTest {
                 int userNumber = i + j + 1;
                 String nickname = "user" + userNumber;
                 String email = "user" + userNumber + "@gmail.com";
-                User user = User.registerNewUser(nickname, email);
+                User user = User.createUser(nickname, email);
                 userBatch.add(user);
             }
             userRepository.saveAll(userBatch);

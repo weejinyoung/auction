@@ -1,8 +1,5 @@
-package com.ourfantasy.auction.auction;
+package com.ourfantasy.auction.auction.model;
 
-import com.ourfantasy.auction.auction.model.Auction;
-import com.ourfantasy.auction.auction.model.AuctionStatus;
-import com.ourfantasy.auction.auction.model.Bidding;
 import com.ourfantasy.auction.config.exception.CustomException;
 import com.ourfantasy.auction.config.response.ResponseCode;
 import com.ourfantasy.auction.item.model.Item;
@@ -66,7 +63,7 @@ class AuctionModelTest {
     }
 
     private Auction createTestAuction() {
-        return Auction.openAuction(
+        return Auction.createAuction(
                 activeUser,
                 item,
                 1000L,
@@ -99,7 +96,7 @@ class AuctionModelTest {
             when(inactiveUser.isInactive()).thenReturn(true);
 
             assertThatThrownBy(() ->
-                    Auction.openAuction(inactiveUser, item, 1000L, 50L, validClosingTime)
+                    Auction.createAuction(inactiveUser, item, 1000L, 50L, validClosingTime)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -116,7 +113,7 @@ class AuctionModelTest {
             when(item.getOwner()).thenReturn(anotherActiveUser);
 
             assertThatThrownBy(() ->
-                    Auction.openAuction(nonOwner, item, 1000L, 50L, validClosingTime)
+                    Auction.createAuction(nonOwner, item, 1000L, 50L, validClosingTime)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -130,7 +127,7 @@ class AuctionModelTest {
         @DisplayName("시작가는 음수일 수 없음")
         void shouldThrowExceptionWhenStartingPriceIsNegative() {
             assertThatThrownBy(() ->
-                    Auction.openAuction(activeUser, item, -100L, 50L, validClosingTime)
+                    Auction.createAuction(activeUser, item, -100L, 50L, validClosingTime)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -141,7 +138,7 @@ class AuctionModelTest {
         @DisplayName("최소 입찰 증가액은 음수일 수 없음")
         void shouldThrowExceptionWhenBidIncrementIsNegative() {
             assertThatThrownBy(() ->
-                    Auction.openAuction(activeUser, item, 1000L, -10L, validClosingTime)
+                    Auction.createAuction(activeUser, item, 1000L, -10L, validClosingTime)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -154,7 +151,7 @@ class AuctionModelTest {
             LocalDateTime pastTime = LocalDateTime.now().minusDays(1);
 
             assertThatThrownBy(() ->
-                    Auction.openAuction(activeUser, item, 1000L, 50L, pastTime)
+                    Auction.createAuction(activeUser, item, 1000L, 50L, pastTime)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -173,7 +170,7 @@ class AuctionModelTest {
             when(anotherActiveUser.getId()).thenReturn(3L);
             when(anotherActiveUser.isInactive()).thenReturn(false);
 
-            Bidding bidding = auction.placeBid(anotherActiveUser, 1100L);
+            Bidding bidding = auction.bid(anotherActiveUser, 1100L);
 
             assertThat(bidding).isNotNull();
             assertThat(bidding.getAuction()).isEqualTo(auction);
@@ -186,13 +183,13 @@ class AuctionModelTest {
         @DisplayName("비활성 경매에 입찰 불가")
         void shouldThrowExceptionWhenAuctionIsInactive() {
             // 경매 완료 처리
-            auction.completeAuction();
+            auction.complete();
 
             // 이 테스트에서 실제 사용되는 스터빙
             when(anotherActiveUser.getId()).thenReturn(3L);
 
             assertThatThrownBy(() ->
-                    auction.placeBid(anotherActiveUser, 1100L)
+                    auction.bid(anotherActiveUser, 1100L)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -206,7 +203,7 @@ class AuctionModelTest {
             when(inactiveUser.isInactive()).thenReturn(true);
 
             assertThatThrownBy(() ->
-                    auction.placeBid(inactiveUser, 1100L)
+                    auction.bid(inactiveUser, 1100L)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -221,7 +218,7 @@ class AuctionModelTest {
             when(anotherActiveUser.isInactive()).thenReturn(false);
 
             assertThatThrownBy(() ->
-                    auction.placeBid(anotherActiveUser, 1040L)
+                    auction.bid(anotherActiveUser, 1040L)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -236,7 +233,7 @@ class AuctionModelTest {
             when(activeUser.isInactive()).thenReturn(false);
 
             assertThatThrownBy(() ->
-                    auction.placeBid(activeUser, 1100L)
+                    auction.bid(activeUser, 1100L)
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -251,7 +248,7 @@ class AuctionModelTest {
             when(anotherActiveUser.isInactive()).thenReturn(false);
 
             // 첫 번째 입찰
-            auction.placeBid(anotherActiveUser, 1100L);
+            auction.bid(anotherActiveUser, 1100L);
             assertThat(auction.getHighestBidPrice()).isEqualTo(1100L);
 
             // 새로운 높은 입찰
@@ -259,7 +256,7 @@ class AuctionModelTest {
             when(thirdUser.getId()).thenReturn(4L);
             when(thirdUser.isInactive()).thenReturn(false);
 
-            auction.placeBid(thirdUser, 1200L);
+            auction.bid(thirdUser, 1200L);
             assertThat(auction.getHighestBidPrice()).isEqualTo(1200L);
         }
     }
@@ -271,7 +268,7 @@ class AuctionModelTest {
         @Test
         @DisplayName("경매 완료 테스트")
         void shouldCompleteAuction() {
-            auction.completeAuction();
+            auction.complete();
             assertThat(auction.getStatus()).isEqualTo(AuctionStatus.COMPLETED);
         }
 
@@ -280,7 +277,7 @@ class AuctionModelTest {
         void shouldCheckIfAuctionIsInactive() {
             assertThat(auction.isInactive()).isFalse();
 
-            auction.completeAuction();
+            auction.complete();
             assertThat(auction.isInactive()).isTrue();
         }
     }
