@@ -15,10 +15,16 @@ public record GetAuctionResponse(
     ) {
     }
 
-    record AuctionDescription(
+    record CosignerDescription(
             Long id,
-            Long cosignerId,
+            String nickname
+    ) {
+    }
+
+    record AuctionDescription(
+            CosignerDescription cosigner,
             ItemDescription item,
+            Long auctionId,
             Long startingPrice,
             Long highestBidPrice,
             Long minimumBidIncrement,
@@ -30,13 +36,9 @@ public record GetAuctionResponse(
     public static GetAuctionResponse from(Auction auction) {
         return new GetAuctionResponse(
                 new AuctionDescription(
+                        new CosignerDescription(auction.getCosigner().getId(), auction.getCosigner().getNickname()),
+                        new ItemDescription(auction.getItem().getId(), auction.getItem().getName(), auction.getItem().getDetail()),
                         auction.getId(),
-                        auction.getCosigner().getId(),
-                        new ItemDescription(
-                                auction.getItem().getId(),
-                                auction.getItem().getName(),
-                                auction.getItem().getDetail()
-                        ),
                         auction.getStartingPrice(),
                         auction.getHighestBidPrice(),
                         auction.getMinimumBidIncrement(),
