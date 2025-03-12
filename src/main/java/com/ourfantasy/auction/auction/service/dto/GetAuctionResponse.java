@@ -5,7 +5,6 @@ import com.ourfantasy.auction.auction.model.Auction;
 import java.time.LocalDateTime;
 
 public record GetAuctionResponse(
-        ItemDescription item,
         AuctionDescription auction
 ) {
 
@@ -19,6 +18,7 @@ public record GetAuctionResponse(
     record AuctionDescription(
             Long id,
             Long cosignerId,
+            ItemDescription item,
             Long startingPrice,
             Long highestBidPrice,
             Long minimumBidIncrement,
@@ -29,19 +29,19 @@ public record GetAuctionResponse(
 
     public static GetAuctionResponse from(Auction auction) {
         return new GetAuctionResponse(
-                new ItemDescription(
-                        auction.getItem().getId(),
-                        auction.getItem().getName(),
-                        auction.getItem().getDetail()
-                ),
                 new AuctionDescription(
                         auction.getId(),
                         auction.getCosigner().getId(),
+                        new ItemDescription(
+                                auction.getItem().getId(),
+                                auction.getItem().getName(),
+                                auction.getItem().getDetail()
+                        ),
                         auction.getStartingPrice(),
                         auction.getHighestBidPrice(),
                         auction.getMinimumBidIncrement(),
                         auction.getClosingAt(),
-                        auction.getStatus().name()
+                        auction.getStatus().getDisplayName()
                 )
         );
     }
