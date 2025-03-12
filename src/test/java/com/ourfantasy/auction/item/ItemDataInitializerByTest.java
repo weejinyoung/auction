@@ -1,6 +1,7 @@
 package com.ourfantasy.auction.item;
 
 import com.ourfantasy.auction.item.model.Item;
+import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.user.model.User;
 import com.ourfantasy.auction.user.repository.UserRepository;
 import com.ourfantasy.auction.item.repository.ItemRepository;
@@ -8,6 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.util.ArrayList;
@@ -58,6 +62,40 @@ public class ItemDataInitializerByTest {
         System.out.println("아이템 생성 완료: 총 " + totalItems + "개");
     }
 
+    @Test
+    @EnabledIf("false") // 실행이 필요할 때만 true로 변경
+    @DisplayName("기존 아이템에 랜덤 카테고리 추가")
+    public void updateItemsWithRandomCategory() {
+        int pageSize = 1000;
+        int page = 0;
+        long totalUpdated = 0;
+
+        Page<Item> itemPage;
+
+        do {
+            Pageable pageable = PageRequest.of(page, pageSize);
+            itemPage = itemRepository.findAll(pageable);
+
+            List<Item> batchItems = new ArrayList<>();
+
+            for (Item item : itemPage.getContent()) {
+                ItemCategory randomCategory = getRandomCategory();
+                item.changeCategory(randomCategory);
+                batchItems.add(item);
+            }
+
+            // 배치 저장
+            itemRepository.saveAll(batchItems);
+
+            totalUpdated += itemPage.getNumberOfElements();
+            System.out.printf("처리 중: %d 페이지, 총 %d 아이템 업데이트 완료%n", page, totalUpdated);
+
+            page++;
+        } while (itemPage.hasNext());
+
+        System.out.println("모든 아이템 카테고리 업데이트 완료: 총 " + totalUpdated + "개");
+    }
+
 
     private Item createItem(User owner, int itemNumber) {
         StringBuilder detailBuilder = new StringBuilder();
@@ -65,6 +103,11 @@ public class ItemDataInitializerByTest {
         detailBuilder.append("detail-".repeat(repeatCount));
         detailBuilder.append(itemNumber);
         String name = "item" + itemNumber;
-        return Item.createItem(owner, name, detailBuilder.toString());
+        return Item.createItem(owner, name, detailBuilder.toString(), getRandomCategory());
+    }
+
+    private ItemCategory getRandomCategory() {
+        ItemCategory[] categories = ItemCategory.values();
+        return categories[random.nextInt(categories.length)];
     }
 }
