@@ -47,7 +47,7 @@ public class AuctionDataInitializerByTest {
             int auctionItemCount = random.nextInt(2) + 2; // 2 또는 3
             for (int i = 0; i < auctionItemCount && i < items.size(); i++) {
                 Item item = items.get(i);
-                Auction auction = Auction.openAuction(
+                Auction auction = Auction.createAuction(
                         user,
                         item,
                         random.nextInt(41) * 1000L + 10000L, // 무작위 시작 가격: 10,000원에서 50,000원 사이 (천원 단위)
