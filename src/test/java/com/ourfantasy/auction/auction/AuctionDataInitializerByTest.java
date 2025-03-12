@@ -30,7 +30,7 @@ public class AuctionDataInitializerByTest {
     private final Random random = new Random();
 
     @Test
-    @EnabledIf("true") // 반드시 필요할 때만 true 로 해주세요
+    @EnabledIf("false") // 반드시 필요할 때만 true 로 해주세요
     @DisplayName("사용자의 아이템 중 2~3개를 뽑아서 경매 생성")
     public void generateAuctionData() {
 
