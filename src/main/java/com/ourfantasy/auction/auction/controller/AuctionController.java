@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Auction", description = "Auction API")
 @RestController("/api/v1/auction")
@@ -31,20 +28,20 @@ public class AuctionController {
     @Operation(summary = "종료 시간이 임박한 경매 리스트 조회", description = "종료 시간이 임박한 경매 리스트 조회 API 입니다, 특정 카테고리의 경매를 필터링할 수 있습니다.")
     public Page<GetAuctionResponse> getNearestClosingAuctionsByCategory(
             @PageableDefault(size = 10, sort = "closingAt") Pageable pageable,
-            @PathVariable ItemCategory itemCategory
+            @PathVariable String itemCategory
     ) {
         return auctionService.getNearestClosingAuctionsByCategory(pageable, itemCategory);
     }
 
     @PostMapping
     @Operation(summary = "경매 개시", description = "경매 개시 API 입니다.")
-    public OpenAuctionResponse openAuction(OpenAuctionRequest request) {
+    public OpenAuctionResponse openAuction(@RequestBody OpenAuctionRequest request) {
         return auctionService.openAuction(request);
     }
 
     @PostMapping("/{auctionId}/bid")
     @Operation(summary = "응찰", description = "응찰 API 입니다.")
-    public BidResponse bid(@PathVariable Long auctionId, BidRequest request) {
+    public BidResponse bid(@PathVariable Long auctionId, @RequestBody BidRequest request) {
         return auctionService.bid(auctionId, request);
     }
 }

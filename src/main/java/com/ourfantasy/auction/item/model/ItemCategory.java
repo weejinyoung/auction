@@ -1,5 +1,8 @@
 package com.ourfantasy.auction.item.model;
 
+import com.ourfantasy.auction.config.exception.CustomException;
+import com.ourfantasy.auction.config.response.ResponseCode;
+
 public enum ItemCategory {
     DIGITAL,    // 디지털
     FURNITURE,  // 가구
@@ -19,5 +22,14 @@ public enum ItemCategory {
             case BOOK -> "책";
             case ETC -> "기타";
         };
+    }
+
+    public static ItemCategory findByDisplayName(String displayName) {
+        for (ItemCategory category : values()) {
+            if (category.getDisplayName().equals(displayName)) {
+                return category;
+            }
+        }
+        throw new CustomException(ResponseCode.ITEM_CATEGORY_NOT_FOUND_BY_DISPLAY_NAME);
     }
 }
