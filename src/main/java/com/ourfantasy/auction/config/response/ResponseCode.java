@@ -52,6 +52,7 @@ public enum ResponseCode {
     // 아이템 관련 오류 코드 (4000번대)
     ITEM_NOT_FOUND("4001", "아이템을 찾을 수 없습니다"),
     ITEM_ALREADY_IN_AUCTION("4002", "이미 경매 중인 아이템입니다"),
+    ITEM_CATEGORY_NOT_FOUND_BY_DISPLAY_NAME("4003", "해당 카테고리를 찾을 수 없습니다"),
 
     // 낙찰 관련 오류 코드 (5000번대)
     SUCCESSFUL_BID_NOT_FOUND("5001", "낙찰 정보를 찾을 수 없습니다"),

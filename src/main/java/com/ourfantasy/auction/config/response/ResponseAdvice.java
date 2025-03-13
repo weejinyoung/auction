@@ -36,19 +36,20 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             ServerHttpRequest request,
             ServerHttpResponse response
     ) {
-        if (body == null) {
-            return ApiResponse.ok(null);
-        }
-
-        if (body instanceof Page<?>) {
-            Page<?> page = (Page<?>) body;
-            response.getHeaders().set(PAGE_TOTAL_PAGES, String.valueOf(page.getTotalPages()));
-            response.getHeaders().set(PAGE_TOTAL_ELEMENTS, String.valueOf(page.getTotalElements()));
-            return ApiResponse.ok(page.getContent());
-        }
-
-        if (body instanceof ApiResponse<?>) {
-            return body;
+        switch (body) {
+            case null -> {
+                return ApiResponse.ok(null);
+            }
+            case Page<?> page -> {
+                response.getHeaders().set(PAGE_TOTAL_PAGES, String.valueOf(page.getTotalPages()));
+                response.getHeaders().set(PAGE_TOTAL_ELEMENTS, String.valueOf(page.getTotalElements()));
+                return ApiResponse.ok(page.getContent());
+            }
+            case ApiResponse<?> apiResponse -> {
+                return body;
+            }
+            default -> {
+            }
         }
 
         return ApiResponse.ok(body);

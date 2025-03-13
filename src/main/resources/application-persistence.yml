@@ -21,10 +21,6 @@ spring:
     show-sql: true
     defer-datasource-initialization: true
     open-in-view: false
-#  sql:
-#    init:
-#      data-locations: classpath:properties/*.sql
-#      mode: always
 
 ---
 spring:

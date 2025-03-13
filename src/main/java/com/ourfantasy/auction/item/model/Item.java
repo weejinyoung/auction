@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Random;
+
 @Entity
 @Table(name = "item")
 @Getter
@@ -26,13 +28,22 @@ public class Item extends BaseTimeEntity {
     @Column(nullable = false)
     private String detail;
 
-    private Item(User owner, String name, String detail) {
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ItemCategory category;
+
+    private Item(User owner, String name, String detail, ItemCategory category) {
         this.owner = owner;
         this.name = name;
         this.detail = detail;
+        this.category = category;
     }
 
-    public static Item createItem(User owner, String name, String detail) {
-        return new Item(owner, name, detail);
+    public static Item createItem(User owner, String name, String detail, ItemCategory category) {
+        return new Item(owner, name, detail, category);
+    }
+
+    public void changeCategory(ItemCategory category) {
+        this.category = category;
     }
 }

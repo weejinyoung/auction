@@ -10,6 +10,7 @@ import com.ourfantasy.auction.auction.service.dto.*;
 import com.ourfantasy.auction.config.exception.CustomException;
 import com.ourfantasy.auction.config.response.ResponseCode;
 import com.ourfantasy.auction.item.model.Item;
+import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.item.repository.ItemRepository;
 import com.ourfantasy.auction.user.model.User;
 import com.ourfantasy.auction.user.repository.UserRepository;
@@ -70,7 +71,13 @@ public class AuctionService {
 
     @Transactional(readOnly = true)
     public Page<GetAuctionResponse> getLatestOpenedAuctions(Pageable pageable) {
-        return auctionCustomRepository.findRecentActiveAuctionsWithItem(pageable)
+        return auctionCustomRepository.findLatestOpenedAuctions(pageable)
+                .map(GetAuctionResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<GetAuctionResponse> getNearestClosingAuctionsByCategory(Pageable pageable, String itemCategory) {
+        return auctionCustomRepository.findNearestClosingAuctionsByCategory(pageable, ItemCategory.findByDisplayName(itemCategory))
                 .map(GetAuctionResponse::from);
     }
 }
