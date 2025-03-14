@@ -39,7 +39,13 @@ public class AuctionService {
                 .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));
         Item item = itemRepository.findById(request.itemId())
                         .orElseThrow(() -> new CustomException(ResponseCode.ITEM_NOT_FOUND));
-        Auction newAuction = Auction.createAuction(cosigner, item, request.startingPrice(), request.minimumBidIncrement(), request.closingAt());
+        Auction newAuction = Auction.builderWithValidate()
+                .cosigner(cosigner)
+                .item(item)
+                .startingPrice(request.startingPrice())
+                .minimumBidIncrement(request.minimumBidIncrement())
+                .closingAt(request.closingAt())
+                .build();
         Auction savedAuction = auctionRepository.save(newAuction);
         return OpenAuctionResponse.from(savedAuction);
     }

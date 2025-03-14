@@ -47,13 +47,13 @@ public class AuctionDataInitializerByTest {
             int auctionItemCount = random.nextInt(2) + 2; // 2 또는 3
             for (int i = 0; i < auctionItemCount && i < items.size(); i++) {
                 Item item = items.get(i);
-                Auction auction = Auction.createAuction(
-                        user,
-                        item,
-                        random.nextInt(41) * 1000L + 10000L, // 무작위 시작 가격: 10,000원에서 50,000원 사이 (천원 단위)
-                        random.nextInt(21) * 1000L + 10000L, // 무작위 최소 입찰 증가액: 10,000원에서 30,000원 사이 (천원 단위)
-                        item.getCreatedAt().plusDays(7)
-                );
+                Auction auction = Auction.builderWithValidate()
+                        .cosigner(user)
+                        .item(item)
+                        .startingPrice(1000L * (i + 1))
+                        .minimumBidIncrement(100L * (i + 1))
+                        .closingAt(item.getCreatedAt().plusDays(7))
+                        .build();
                 auctionRepository.save(auction);
             }
         }

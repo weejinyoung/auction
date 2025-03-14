@@ -63,13 +63,13 @@ class AuctionModelTest {
     }
 
     private Auction createTestAuction() {
-        return Auction.createAuction(
-                activeUser,
-                item,
-                1000L,
-                50L,
-                validClosingTime
-        );
+        return Auction.builderWithValidate()
+                .cosigner(activeUser)
+                .item(item)
+                .startingPrice(1000L)
+                .minimumBidIncrement(50L)
+                .closingAt(validClosingTime)
+                .build();
     }
 
     @Nested
@@ -96,7 +96,13 @@ class AuctionModelTest {
             when(inactiveUser.isInactive()).thenReturn(true);
 
             assertThatThrownBy(() ->
-                    Auction.createAuction(inactiveUser, item, 1000L, 50L, validClosingTime)
+                    Auction.builderWithValidate()
+                            .cosigner(inactiveUser)
+                            .item(item)
+                            .startingPrice(1000L)
+                            .minimumBidIncrement(50L)
+                            .closingAt(validClosingTime)
+                            .build()
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -113,7 +119,13 @@ class AuctionModelTest {
             when(item.getOwner()).thenReturn(anotherActiveUser);
 
             assertThatThrownBy(() ->
-                    Auction.createAuction(nonOwner, item, 1000L, 50L, validClosingTime)
+                    Auction.builderWithValidate()
+                            .cosigner(nonOwner)
+                            .item(item)
+                            .startingPrice(1000L)
+                            .minimumBidIncrement(50L)
+                            .closingAt(validClosingTime)
+                            .build()
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -127,7 +139,13 @@ class AuctionModelTest {
         @DisplayName("시작가는 음수일 수 없음")
         void shouldThrowExceptionWhenStartingPriceIsNegative() {
             assertThatThrownBy(() ->
-                    Auction.createAuction(activeUser, item, -100L, 50L, validClosingTime)
+                    Auction.builderWithValidate()
+                            .cosigner(activeUser)
+                            .item(item)
+                            .startingPrice(-100L)
+                            .minimumBidIncrement(50L)
+                            .closingAt(validClosingTime)
+                            .build()
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -138,7 +156,13 @@ class AuctionModelTest {
         @DisplayName("최소 입찰 증가액은 음수일 수 없음")
         void shouldThrowExceptionWhenBidIncrementIsNegative() {
             assertThatThrownBy(() ->
-                    Auction.createAuction(activeUser, item, 1000L, -10L, validClosingTime)
+                    Auction.builderWithValidate()
+                            .cosigner(activeUser)
+                            .item(item)
+                            .startingPrice(1000L)
+                            .minimumBidIncrement(-10L)
+                            .closingAt(validClosingTime)
+                            .build()
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")
@@ -151,7 +175,13 @@ class AuctionModelTest {
             LocalDateTime pastTime = LocalDateTime.now().minusDays(1);
 
             assertThatThrownBy(() ->
-                    Auction.createAuction(activeUser, item, 1000L, 50L, pastTime)
+                    Auction.builderWithValidate()
+                            .cosigner(activeUser)
+                            .item(item)
+                            .startingPrice(1000L)
+                            .minimumBidIncrement(50L)
+                            .closingAt(pastTime)
+                            .build()
             )
                     .isInstanceOf(CustomException.class)
                     .extracting("responseCode")

@@ -42,7 +42,10 @@ class AuctionCustomRepositoryTest {
     @BeforeEach
     void setUp() {
         // 테스트 유저 생성
-        testUser = User.createUser("testuser", "test@test.com");
+        testUser = User.builderWithValidate()
+                .email("test@test.com")
+                .nickname("test")
+                .build();
         em.persist(testUser);
 
         // 다양한 카테고리의 경매 생성
@@ -189,22 +192,24 @@ class AuctionCustomRepositoryTest {
         List<Auction> auctions = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            Item item = Item.createItem(owner,
-                    category.name() + " Item " + i,
-                    "Detail for " + category.name() + " " + i,
-                    category);
+            Item item = Item.builder()
+                    .owner(owner)
+                    .name(category.name() + " Item " + i)
+                    .detail("Detail for " + category.name() + " " + i)
+                    .category(category)
+                    .build();
             em.persist(item);
 
             // 약간의 시간 차이를 두고 마감시간 설정 (순서 보장)
             LocalDateTime closingAt = baseClosingTime.plusMinutes(i * 30);
 
-            Auction auction = Auction.createAuction(
-                    owner,
-                    item,
-                    1000L * (i + 1), // 시작가
-                    100L * (i + 1), // 최소 입찰 증가액
-                    closingAt
-            );
+            Auction auction = Auction.builderWithValidate()
+                    .cosigner(owner)
+                    .item(item)
+                    .startingPrice(1000L * (i + 1))
+                    .minimumBidIncrement(100L * (i + 1))
+                    .closingAt(closingAt)
+                    .build();
             em.persist(auction);
             auctions.add(auction);
 

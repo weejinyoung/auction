@@ -7,6 +7,7 @@ import com.ourfantasy.auction.item.model.Item;
 import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,7 +46,9 @@ public class Auction extends BaseTimeEntity {
     @Column(nullable = false)
     private AuctionStatus status;
 
+    @Builder(builderMethodName = "builderWithValidate")
     private Auction(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingAt) {
+        validateAuctionCreating(cosigner, item, startingPrice, minimumBidIncrement, closingAt);
         this.cosigner = cosigner;
         this.item = item;
         this.startingPrice = startingPrice;
@@ -55,12 +58,7 @@ public class Auction extends BaseTimeEntity {
         this.status = AuctionStatus.ACTIVE;
     }
 
-    public static Auction createAuction(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
-        validateAuctionCreating(cosigner, item, startingPrice, minimumBidIncrement, closingTime);
-        return new Auction(cosigner, item, startingPrice, minimumBidIncrement, closingTime);
-    }
-
-    private static void validateAuctionCreating(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
+    private void validateAuctionCreating(User cosigner, Item item, Long startingPrice, Long minimumBidIncrement, LocalDateTime closingTime) {
         if (cosigner.isInactive()) {
             throw new CustomException(ResponseCode.AUCTION_INACTIVE_USER);
         }

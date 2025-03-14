@@ -103,7 +103,12 @@ public class ItemDataInitializerByTest {
         detailBuilder.append("detail-".repeat(repeatCount));
         detailBuilder.append(itemNumber);
         String name = "item" + itemNumber;
-        return Item.createItem(owner, name, detailBuilder.toString(), getRandomCategory());
+        return Item.builder()
+                .owner(owner)
+                .name(name)
+                .detail(detailBuilder.toString())
+                .category(getRandomCategory())
+                .build();
     }
 
     private ItemCategory getRandomCategory() {

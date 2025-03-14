@@ -5,6 +5,7 @@ import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
 import com.ourfantasy.auction.config.response.ResponseCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,18 +28,15 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @Builder(builderMethodName = "builderWithValidate")
     private User(String nickname, String email) {
+        validateCreatingUser(email, nickname);
         this.nickname = nickname;
         this.email = email;
         this.status = UserStatus.ACTIVE;
     }
 
-    public static User createUser(String nickname, String email) {
-        validateUserCreating(email, nickname);
-        return new User(nickname, email);
-    }
-
-    private static void validateUserCreating(String email, String nickname) {
+    private void validateCreatingUser(String email, String nickname) {
         if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
             throw new CustomException(ResponseCode.INVALID_EMAIL);
         }

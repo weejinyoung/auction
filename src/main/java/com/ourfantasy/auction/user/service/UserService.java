@@ -16,7 +16,12 @@ public class UserService {
 
     @Transactional
     public RegisterNewUserResponse registerNewUser(RegisterNewUserRequest request) {
-        User newUser = User.createUser(request.nickname(), request.email());
-        return RegisterNewUserResponse.from(userRepository.save(newUser));
+        User newUser = User.builderWithValidate()
+                .nickname(request.nickname())
+                .email(request.email())
+                .build();
+
+        User savedUser = userRepository.save(newUser);
+        return RegisterNewUserResponse.from(savedUser);
     }
 }

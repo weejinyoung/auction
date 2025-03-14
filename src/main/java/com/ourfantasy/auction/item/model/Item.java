@@ -2,8 +2,10 @@ package com.ourfantasy.auction.item.model;
 
 import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
 import com.ourfantasy.auction.user.model.User;
+import com.ourfantasy.auction.user.model.UserStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,15 +34,12 @@ public class Item extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ItemCategory category;
 
+    @Builder
     private Item(User owner, String name, String detail, ItemCategory category) {
         this.owner = owner;
         this.name = name;
         this.detail = detail;
         this.category = category;
-    }
-
-    public static Item createItem(User owner, String name, String detail, ItemCategory category) {
-        return new Item(owner, name, detail, category);
     }
 
     public void changeCategory(ItemCategory category) {
