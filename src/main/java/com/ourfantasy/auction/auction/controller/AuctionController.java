@@ -2,7 +2,6 @@ package com.ourfantasy.auction.auction.controller;
 
 import com.ourfantasy.auction.auction.service.AuctionService;
 import com.ourfantasy.auction.auction.service.dto.*;
-import com.ourfantasy.auction.item.model.ItemCategory;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
