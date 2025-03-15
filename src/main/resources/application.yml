@@ -4,6 +4,7 @@ server:
 
 springdoc:
   swagger-ui:
+    display-request-duration: true
     path: /api-docs
     tags-sorter: alpha
     operations-sorter: alpha
