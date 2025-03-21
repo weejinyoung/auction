@@ -13,10 +13,16 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "auction")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "auction",
+        indexes = {
+                @Index(name = "idx_auction_status_created_at", columnList = "status, created_at"),
+                @Index(name = "idx_auction_status_closing_at", columnList = "status, closing_at"),
+                @Index(name = "idx_auction_item_id", columnList = "item_id"),
+                @Index(name = "idx_auction_cosigner_id", columnList = "cosigner_id")
+        })
 public class Auction extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

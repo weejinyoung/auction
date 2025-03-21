@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 import java.util.Random;
 
 @Entity
-@Table(name = "item")
+@Table(name = "item", indexes = {
+        @Index(name = "idx_item_category", columnList = "category")
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item extends BaseTimeEntity {

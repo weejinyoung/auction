@@ -31,7 +31,6 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
         BooleanExpression conditions = auction.status.eq(AuctionStatus.ACTIVE);
 
         List<Auction> content = from(auction)
-                .distinct()
                 .leftJoin(auction.item, item).fetchJoin()
                 .leftJoin(auction.cosigner, user).fetchJoin()
                 .where(conditions)
@@ -58,7 +57,6 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
                 .and(item.category.eq(itemCategory));
 
         List<Auction> content = from(auction)
-                .distinct()
                 .leftJoin(auction.item, item).fetchJoin()
                 .leftJoin(auction.cosigner, user).fetchJoin()
                 .where(conditions)
