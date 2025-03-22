@@ -5,7 +5,19 @@ import com.ourfantasy.auction.auction.model.AuctionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface AuctionRepository extends JpaRepository<Auction, Long> {
+
     Page<Auction> findByStatusOrderByCreatedAtDesc(AuctionStatus status, Pageable pageable);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Auction a SET a.highestBidPrice = :newBidPrice WHERE a.highestBidPrice = :currentBidPrice AND a.id = :auctionId")
+    int updateHighestBidPriceWithOptimisticLock(
+            @Param("newBidPrice") Long newBidPrice,
+            @Param("currentBidPrice") Long currentBidPrice,
+            @Param("auctionId") Long auctionId
+    );
 }
