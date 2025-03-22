@@ -27,7 +27,7 @@ public class Bidding extends BaseTimeEntity {
     @Column(nullable = false)
     private Long bidPrice;
 
-    Bidding(Auction auction, User bidder, Long bidPrice) {
+    public Bidding(Auction auction, User bidder, Long bidPrice) {
         this.auction = auction;
         this.bidder = bidder;
         this.bidPrice = bidPrice;

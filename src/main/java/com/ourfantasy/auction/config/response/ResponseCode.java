@@ -41,6 +41,7 @@ public enum ResponseCode {
     BID_INCREMENT_VIOLATION("2007", "최소 입찰 증가액을 충족하지 않습니다"),
     BIDDER_REQUIRED("2008", "입찰자 정보는 필수입니다"),
     INACTIVE_BIDDER("2009", "비활성화된 사용자는 응찰을 할 수 없습니다"),
+    BID_CONFLICT("2010", "이미 다른 사용자가 비드를 시도하는 중입니다. 다음 비드를 시도해주세요"),
 
     // 사용자 관련 오류 코드 (3000번대)
     USER_NOT_FOUND("3001", "사용자를 찾을 수 없습니다"),

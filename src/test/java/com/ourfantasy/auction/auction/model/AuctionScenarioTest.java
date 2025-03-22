@@ -104,9 +104,9 @@ public class AuctionScenarioTest {
         Auction auction = auctionRepository.findById(response.auctionId())
                 .orElseThrow(() -> new RuntimeException("Auction not found"));
 
-        System.out.println(auction.getHighestBidPrice());
+        System.out.println("최고 비드 금액 " + auction.getHighestBidPrice());
         biddingRepository.findBiddingsByAuctionOrderByCreatedAtAsc(auction)
-                .forEach(bidding -> System.out.println(bidding.getBidPrice()));
+                .forEach(bidding -> System.out.println("비드했던 금액들 "+ bidding.getBidPrice()));
 
     }
 
