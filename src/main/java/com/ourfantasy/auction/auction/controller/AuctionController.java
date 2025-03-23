@@ -17,6 +17,12 @@ public class AuctionController {
 
     private final AuctionService auctionService;
 
+    @GetMapping("/{auctionId}")
+    @Operation(summary = "경매 상세 조회", description = "특정 경매의 상세 정보 조회 API 입니다.")
+    public GetAuctionResponse getAuctionDetail(@PathVariable Long auctionId) {
+        return auctionService.getAuctionDetail(auctionId);
+    }
+
     @GetMapping("/recent")
     @Operation(summary = "가장 최근에 열린 경매 리스트 조회", description = "가장 최근에 열린 경매 리스트 조회 API 입니다.")
     public Page<GetAuctionResponse> getLatestOpenedAuctions(@PageableDefault(size = 10, sort = "createdAt") Pageable pageable) {
