@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,14 @@ public class AuctionService {
     private final ItemRepository itemRepository;
     private final SuccessfulBiddingRepository successfulBiddingRepository;
     private final ApplicationEventPublisher eventPublisher;
+
+    // 현재는 옥션 리스트에서 보여지는 정보랑 같지만 추후엔 더 많은 정보를 보여줄 예정
+    @Transactional(readOnly = true)
+    public GetAuctionResponse getAuctionDetail(@Param("auctionId") Long auctionId) {
+        Auction auction = auctionRepository.findById(auctionId)
+                .orElseThrow(() -> new CustomException(ResponseCode.AUCTION_NOT_FOUND));
+        return GetAuctionResponse.from(auction);
+    }
 
     @Transactional
     public OpenAuctionResponse openAuction(OpenAuctionRequest request) {

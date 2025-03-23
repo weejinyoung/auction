@@ -1,6 +1,7 @@
 package com.ourfantasy.auction.auction.service.dto;
 
 import com.ourfantasy.auction.auction.model.Auction;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
