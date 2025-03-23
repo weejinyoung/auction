@@ -96,7 +96,7 @@ public class Auction extends BaseTimeEntity {
         return new Bidding(this, bidder, bidPrice);
     }
 
-    private void validateBid(User bidder, Long bidPrice) {
+    public void validateBid(User bidder, Long bidPrice) {
         if (isInactive()) {
             throw new CustomException(ResponseCode.AUCTION_NOT_ACTIVE);
         }
@@ -113,5 +113,9 @@ public class Auction extends BaseTimeEntity {
 
     public void complete() {
         this.status = AuctionStatus.COMPLETED;
+    }
+
+    public void setHighestBidPrice(Long highestBidPrice) {
+        this.highestBidPrice = highestBidPrice;
     }
 }
