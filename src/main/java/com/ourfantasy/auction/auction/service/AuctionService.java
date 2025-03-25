@@ -61,7 +61,7 @@ public class AuctionService {
 
 //    @Transactional
 //    public BidResponse bid(Long auctionId, BidRequest request) {
-//        Auction auctionToBid = auctionRepository.findById(auctionId)
+//        Auction auctionToBid = auctionRepository.findAuctionForUpdate(auctionId)
 //                .orElseThrow(() -> new CustomException(ResponseCode.AUCTION_NOT_FOUND));
 //        User bidder = userRepository.findById(request.bidderId())
 //                .orElseThrow(() -> new CustomException(ResponseCode.USER_NOT_FOUND));

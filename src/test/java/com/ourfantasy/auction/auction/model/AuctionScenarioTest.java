@@ -18,15 +18,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@Transactional
 public class AuctionScenarioTest {
 
     @Autowired private AuctionService auctionService;
@@ -35,8 +37,8 @@ public class AuctionScenarioTest {
     @Autowired private AuctionRepository auctionRepository;
     @Autowired private BiddingRepository biddingRepository;
     @Autowired @Qualifier("taskExecutor") private TaskExecutor taskExecutor;
-    private final int userCount = 10;
-    private final int bidCount = 5;
+    private final int userCount = 20;
+    private final int bidCount = 21;
     private final Random random = new Random();
     private List<User> savedUsers;
     private User owner;
@@ -82,6 +84,8 @@ public class AuctionScenarioTest {
         CountDownLatch bisStartLatch = new CountDownLatch(1);
         CountDownLatch bidCompleteLatch = new CountDownLatch(bidCount - 1);
 
+        AtomicInteger failBidCount = new AtomicInteger();
+
         for(int i = 2; i <= bidCount; i++) {
             int finalI = i;
             long bidPrice = i * 1000L;
@@ -89,10 +93,14 @@ public class AuctionScenarioTest {
             taskExecutor.execute(() -> {
                 try {
                     bisStartLatch.await();
+                    System.out.println("-> User " + finalI + " bid start, start time is " + LocalDateTime.now());
                     auctionService.bid(response.auctionId(), new BidRequest(savedUsers.get(finalI).getId(), finalBidPrice));
+                    System.out.println("-> User " + finalI + " bid success, success time is " + LocalDateTime.now());
                 } catch (Exception ignored) {
-                    System.out.println("User " + finalI + " bid failed");
+                    System.out.println("-> User " + finalI + " bid failed, failed time is " + LocalDateTime.now());
+                    failBidCount.getAndIncrement();
                 } finally {
+                    System.out.println("-> User " + finalI + " bid end, end time is " + LocalDateTime.now());
                     bidCompleteLatch.countDown();
                 }
             });
@@ -107,6 +115,7 @@ public class AuctionScenarioTest {
         System.out.println("최고 비드 금액 " + auction.getHighestBidPrice());
         biddingRepository.findBiddingsByAuctionOrderByCreatedAtAsc(auction)
                 .forEach(bidding -> System.out.println("비드했던 금액들 "+ bidding.getBidPrice()));
+        System.out.println("실패한 비드 숫자 : " + failBidCount.get());
 
     }
 
