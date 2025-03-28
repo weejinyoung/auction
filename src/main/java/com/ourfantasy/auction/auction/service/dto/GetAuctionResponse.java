@@ -22,7 +22,7 @@ public record GetAuctionResponse(
     ) {
     }
 
-    record AuctionDescription(
+    public record AuctionDescription(
             CosignerDescription cosigner,
             ItemDescription item,
             Long auctionId,
@@ -47,5 +47,8 @@ public record GetAuctionResponse(
                         auction.getStatus().getDisplayName()
                 )
         );
+    }
+    public Long getAuctionId() {
+        return this.auction.auctionId();
     }
 }
