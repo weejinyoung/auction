@@ -16,11 +16,11 @@ public class ItemRating extends BaseTimeEntity {
 
     // 평가를 준 사람
     @ManyToOne(fetch = FetchType.LAZY)
-    private User ratedBy;
+    private User rater;
 
     // 평가 대상 유저
     @ManyToOne(fetch = FetchType.LAZY)
-    private User ratedUser;
+    private User ratee;
 
     private Double score;
     private String comment;
