@@ -1,6 +1,7 @@
 package com.ourfantasy.auction.rating.model;
 
 import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
+import com.ourfantasy.auction.item.model.Item;
 import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,9 +19,10 @@ public class ItemRating extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private User rater;
 
-    // 평가 대상 유저
+    // 평가 대상 아이템
     @ManyToOne(fetch = FetchType.LAZY)
-    private User ratee;
+    @JoinColumn(name = "item_id", nullable = false)
+    private Item item;
 
     private Double score;
     private String comment;
