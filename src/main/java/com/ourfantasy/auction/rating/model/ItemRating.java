@@ -5,9 +5,11 @@ import com.ourfantasy.auction.item.model.Item;
 import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemRating extends BaseTimeEntity {
@@ -26,4 +28,12 @@ public class ItemRating extends BaseTimeEntity {
 
     private Double score;
     private String comment;
+
+    @Builder
+    public ItemRating(User rater, Item item, Double score, String comment) {
+        this.rater = rater;
+        this.item = item;
+        this.score = score;
+        this.comment = comment;
+    }
 }

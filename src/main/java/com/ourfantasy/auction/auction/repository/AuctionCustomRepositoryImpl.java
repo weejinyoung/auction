@@ -5,8 +5,13 @@ import com.ourfantasy.auction.auction.model.AuctionStatus;
 import com.ourfantasy.auction.auction.model.QAuction;
 import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.item.model.QItem;
+import com.ourfantasy.auction.rating.model.QItemRating;
+import com.ourfantasy.auction.rating.model.QUserRating;
 import com.ourfantasy.auction.user.model.QUser;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -72,5 +77,42 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
                 .fetchOne();
 
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
+    }
+
+    @Override
+    public Page<Tuple> findNearestClosingAuctionsByCategoryWithRating(Pageable pageable, ItemCategory itemCategory) {
+        QAuction auction = QAuction.auction;
+        QUser user = QUser.user;
+        QItem item = QItem.item;
+        QItemRating itemRating = QItemRating.itemRating;
+        QUserRating userRating = QUserRating.userRating;
+
+        BooleanExpression conditions = auction.status.eq(AuctionStatus.ACTIVE)
+                .and(item.category.eq(itemCategory));
+
+        List<Tuple> newContent = from(auction)
+                .select(
+                        auction,
+                        itemRating.score.avg().coalesce(0.0),
+                        userRating.score.avg().coalesce(0.0)
+                )
+                .leftJoin(auction.item, item).fetchJoin()
+                .leftJoin(auction.cosigner, user).fetchJoin()
+                .leftJoin(itemRating).on(itemRating.item.eq(item))
+                .leftJoin(userRating).on(userRating.ratee.eq(user))
+                .where(conditions)
+                .groupBy(auction.id)
+                .orderBy(auction.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long total = from(auction)
+                .join(auction.item, item)
+                .select(auction.countDistinct())
+                .where(conditions)
+                .fetchOne();
+
+        return new PageImpl<>(newContent, pageable, total != null ? total : 0L);
     }
 }
