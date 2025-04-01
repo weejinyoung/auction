@@ -10,6 +10,7 @@ import com.ourfantasy.auction.rating.model.QUserRating;
 import com.ourfantasy.auction.user.model.QUser;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +19,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.querydsl.jpa.JPAExpressions.select;
-
 @Repository
 public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport implements AuctionCustomRepository {
 
-    public AuctionCustomRepositoryImpl() {
+    private final JPAQueryFactory queryFactory;
+
+    public AuctionCustomRepositoryImpl(JPAQueryFactory queryFactory) {
         super(Auction.class);
+        this.queryFactory = queryFactory;
     }
+
+//    public AuctionCustomRepositoryImpl() {
+//        super(Auction.class);
+//    }
 
     @Override
     public Page<Auction> findLatestOpenedAuctions(Pageable pageable) {
@@ -43,8 +49,6 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-
 
         Long total = from(auction)
                 .select(auction.countDistinct())
@@ -92,22 +96,23 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
         BooleanExpression conditions = auction.status.eq(AuctionStatus.ACTIVE)
                 .and(item.category.eq(itemCategory));
 
-        List<Tuple> newContent =
-                select(
+        List<Tuple> newContent = queryFactory
+                .select(
                         auction,
-                        itemRating.score.avg().coalesce(0.0),   // 아이템 평균 평점
-                        userRating.score.avg().coalesce(0.0)    // 판매자 평균 평점
-                ).from(auction)
-                        .leftJoin(auction.item, item).fetchJoin()
-                        .leftJoin(auction.cosigner, user).fetchJoin()
-                        .leftJoin(itemRating).on(itemRating.item.eq(item))        // 아이템 평점 조인
-                        .leftJoin(userRating).on(userRating.ratee.eq(user))        // 판매자 평점 조인
-                        .where(conditions)
-                        .orderBy(auction.createdAt.desc())
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .fetch();
-
+                        itemRating.score.avg().coalesce(0.0),
+                        userRating.score.avg().coalesce(0.0)
+                )
+                .from(auction)
+                .leftJoin(auction.item, item).fetchJoin()
+                .leftJoin(auction.cosigner, user).fetchJoin()
+                .leftJoin(itemRating).on(itemRating.item.eq(item))
+                .leftJoin(userRating).on(userRating.ratee.eq(user))
+                .where(conditions)
+                .groupBy(auction.id)
+                .orderBy(auction.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
         Long total = from(auction)
                 .join(auction.item, item)
