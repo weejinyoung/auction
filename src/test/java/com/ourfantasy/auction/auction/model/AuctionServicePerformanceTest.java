@@ -1,6 +1,8 @@
 package com.ourfantasy.auction.auction.model;
 
 import com.ourfantasy.auction.auction.service.AuctionService;
+import com.ourfantasy.auction.auction.service.dto.GetAuctionResponse;
+import com.ourfantasy.auction.auction.service.dto.GetAuctionResponseWithRating;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +27,13 @@ public class AuctionServicePerformanceTest {
 
         // 기존 메서드 시간 측정
         long startOld = System.nanoTime();
-        Page<?> oldResult = auctionService.getNearestClosingAuctionsByCategory(pageable, itemCategory);
+        Page<GetAuctionResponse> oldResult = auctionService.getNearestClosingAuctionsByCategory(pageable, itemCategory);
         long endOld = System.nanoTime();
         long timeOld = (endOld - startOld) / 1_000_000; // ms 단위
 
         // 새 메서드 시간 측정
         long startNew = System.nanoTime();
-        Page<?> newResult = auctionService.getNearestClosingAuctionsByCategoryWithRating(pageable, itemCategory);
+        Page<GetAuctionResponseWithRating> newResult = auctionService.getNearestClosingAuctionsByCategoryWithRating(pageable, itemCategory);
         long endNew = System.nanoTime();
         long timeNew = (endNew - startNew) / 1_000_000; // ms 단위
 

@@ -9,6 +9,7 @@ import com.ourfantasy.auction.rating.model.QItemRating;
 import com.ourfantasy.auction.rating.model.QUserRating;
 import com.ourfantasy.auction.user.model.QUser;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -22,16 +23,9 @@ import java.util.List;
 @Repository
 public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport implements AuctionCustomRepository {
 
-    private final JPAQueryFactory queryFactory;
-
-    public AuctionCustomRepositoryImpl(JPAQueryFactory queryFactory) {
+    public AuctionCustomRepositoryImpl() {
         super(Auction.class);
-        this.queryFactory = queryFactory;
     }
-
-//    public AuctionCustomRepositoryImpl() {
-//        super(Auction.class);
-//    }
 
     @Override
     public Page<Auction> findLatestOpenedAuctions(Pageable pageable) {
@@ -96,13 +90,12 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
         BooleanExpression conditions = auction.status.eq(AuctionStatus.ACTIVE)
                 .and(item.category.eq(itemCategory));
 
-        List<Tuple> newContent = queryFactory
+        List<Tuple> newContent = from(auction)
                 .select(
                         auction,
                         itemRating.score.avg().coalesce(0.0),
                         userRating.score.avg().coalesce(0.0)
                 )
-                .from(auction)
                 .leftJoin(auction.item, item).fetchJoin()
                 .leftJoin(auction.cosigner, user).fetchJoin()
                 .leftJoin(itemRating).on(itemRating.item.eq(item))

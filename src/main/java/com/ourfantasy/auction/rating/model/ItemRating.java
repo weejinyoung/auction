@@ -29,7 +29,7 @@ public class ItemRating extends BaseTimeEntity {
     private Double score;
     private String comment;
 
-    @Builder(builderMethodName = "builderWithItemRating")
+    @Builder
     public ItemRating(User rater, Item item, Double score, String comment) {
         this.rater = rater;
         this.item = item;

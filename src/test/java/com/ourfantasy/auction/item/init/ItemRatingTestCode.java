@@ -49,7 +49,7 @@ public class ItemRatingTestCode {
                 double score = Math.round((2.0 + random.nextDouble() * 3.0) * 100) / 100.0;
                 String comment = generateItemComment();
 
-                ItemRating rating = ItemRating.builderWithItemRating()
+                ItemRating rating = ItemRating.builder()
                         .rater(rater)
                         .item(item)
                         .score(score)

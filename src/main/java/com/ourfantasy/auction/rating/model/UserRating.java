@@ -30,7 +30,7 @@ public class UserRating extends BaseTimeEntity {
     private Double score;
     private String comment;
 
-    @Builder(builderMethodName = "builderWithUserRating")
+    @Builder
     public UserRating(User rater, User ratee, Double score, String comment) {
         this.rater = rater;
         this.ratee = ratee;

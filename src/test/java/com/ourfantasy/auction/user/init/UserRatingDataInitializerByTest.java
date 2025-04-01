@@ -57,7 +57,7 @@ public class UserRatingDataInitializerByTest {
                     double score = 2.0 + (random.nextDouble() * 3.0);
                     String comment = generateRandomComment();
 
-                    UserRating userRating = UserRating.builderWithUserRating()
+                    UserRating userRating = UserRating.builder()
                             .rater(rater)
                             .ratee(ratee)
                             .score(score)
