@@ -50,13 +50,13 @@ public class AuctionController {
         return auctionService.bid(auctionId, request);
     }
 
-    @GetMapping("/nearest-closing-with-rating/{itemCategory}")
-    @Operation(summary = "종료 시간이 임박한 경매 리스트 조회(평점 포함)", description = "종료 시간이 임박한 경매 리스트를 평점 정보와 함께 조회하는 API 입니다. 특정 카테고리의 경매를 필터링할 수 있습니다.")
-    public Page<GetAuctionResponseWithRating> getNearestClosingAuctionsByCategoryWithRating(
-            @PageableDefault(size = 10, sort = "closingAt") Pageable pageable,
-            @PathVariable String itemCategory
-    ) {
-        return auctionService.getNearestClosingAuctionsByCategoryWithRating(pageable, itemCategory);
-    }
+//    @GetMapping("/nearest-closing-with-rating/{itemCategory}")
+//    @Operation(summary = "종료 시간이 임박한 경매 리스트 조회(평점 포함)", description = "종료 시간이 임박한 경매 리스트를 평점 정보와 함께 조회하는 API 입니다. 특정 카테고리의 경매를 필터링할 수 있습니다.")
+//    public Page<GetAuctionResponseWithRating> getNearestClosingAuctionsByCategoryWithRating(
+//            @PageableDefault(size = 10, sort = "closingAt") Pageable pageable,
+//            @PathVariable String itemCategory
+//    ) {
+//        return auctionService.getNearestClosingAuctionsByCategoryWithRating(pageable, itemCategory);
+//    }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
