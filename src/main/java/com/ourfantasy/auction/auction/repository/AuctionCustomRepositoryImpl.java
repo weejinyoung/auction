@@ -1,11 +1,11 @@
 package com.ourfantasy.auction.auction.repository;
 
-import com.ourfantasy.auction.auction.model.Auction;
-import com.ourfantasy.auction.auction.model.AuctionStatus;
-import com.ourfantasy.auction.auction.model.QAuction;
+import com.ourfantasy.auction.auction.model.*;
 import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.item.model.QItem;
 import com.ourfantasy.auction.user.model.QUser;
+import com.ourfantasy.auction.user.model.QUserFollow;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -80,7 +80,7 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
         QAuction auction = QAuction.auction;
         QUser user = QUser.user;
         QItem item = QItem.item;
-        QBid bid = QBid.bid;
+        QBidding bid = QBidding.bidding;
         QAuctionLike auctionLike = QAuctionLike.auctionLike;
         QUserFollow userFollow = QUserFollow.userFollow;
 

@@ -4,6 +4,7 @@ import com.ourfantasy.auction.config.persistence.BaseTimeEntity;
 import com.ourfantasy.auction.user.model.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,9 +28,12 @@ public class Bidding extends BaseTimeEntity {
     @Column(nullable = false)
     private Long bidPrice;
 
+
+    @Builder
     public Bidding(Auction auction, User bidder, Long bidPrice) {
         this.auction = auction;
         this.bidder = bidder;
         this.bidPrice = bidPrice;
     }
+
 }
