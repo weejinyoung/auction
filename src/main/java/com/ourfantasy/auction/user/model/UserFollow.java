@@ -15,12 +15,12 @@ public class UserFollow extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 나를 팔로우 하는 사람들
+    // 팔로우를 하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "follower_id", nullable = false)
     private User follower;
 
-    // 내가 팔로우 하는 사람들
+    // 팔로우를 당하는 사람
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "followee_id", nullable = false)
     private User followee;
