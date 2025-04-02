@@ -5,13 +5,8 @@ import com.ourfantasy.auction.auction.model.AuctionStatus;
 import com.ourfantasy.auction.auction.model.QAuction;
 import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.item.model.QItem;
-import com.ourfantasy.auction.rating.model.QItemRating;
-import com.ourfantasy.auction.rating.model.QUserRating;
 import com.ourfantasy.auction.user.model.QUser;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.annotations.QueryProjection;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -79,40 +74,50 @@ public class AuctionCustomRepositoryImpl extends QuerydslRepositorySupport imple
         return new PageImpl<>(content, pageable, total != null ? total : 0L);
     }
 
+
     @Override
-    public Page<Tuple> findNearestClosingAuctionsByCategoryWithRating(Pageable pageable, ItemCategory itemCategory) {
+    public Page<Auction> getNearestClosingAuctionsByCategoryWithLikeAndFollow(Pageable pageable, ItemCategory itemCategory) {
         QAuction auction = QAuction.auction;
         QUser user = QUser.user;
         QItem item = QItem.item;
-        QItemRating itemRating = QItemRating.itemRating;
-        QUserRating userRating = QUserRating.userRating;
+        QBid bid = QBid.bid;
+        QAuctionLike auctionLike = QAuctionLike.auctionLike;
+        QUserFollow userFollow = QUserFollow.userFollow;
 
         BooleanExpression conditions = auction.status.eq(AuctionStatus.ACTIVE)
                 .and(item.category.eq(itemCategory));
 
-        List<Tuple> newContent = from(auction)
+        // 인기 많은 경매 기준: 입찰 수 (Bid 수)
+        List<Tuple> results = from(auction)
                 .select(
                         auction,
-                        itemRating.score.avg().coalesce(0.0),
-                        userRating.score.avg().coalesce(0.0)
+                        bid.count().as("bidCount"),
+                        auctionLike.count().as("likeCount"),
+                        userFollow.count().as("followerCount")
                 )
                 .leftJoin(auction.item, item).fetchJoin()
                 .leftJoin(auction.cosigner, user).fetchJoin()
-                .leftJoin(itemRating).on(itemRating.item.eq(item))
-                .leftJoin(userRating).on(userRating.ratee.eq(user))
+                .leftJoin(bid).on(bid.auction.eq(auction))
+                .leftJoin(auctionLike).on(auctionLike.auction.eq(auction))
+                .leftJoin(userFollow).on(userFollow.followee.eq(user))
                 .where(conditions)
                 .groupBy(auction.id)
-                .orderBy(auction.createdAt.desc())
+                .orderBy(bid.count().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        List<Auction> auctions = results.stream()
+                .map(tuple -> tuple.get(auction))
+                .toList();
+
+        // 전체 개수 (집계는 Bid 기준으로 처리)
         Long total = from(auction)
-                .join(auction.item, item)
-                .select(auction.countDistinct())
+                .leftJoin(auction.item, item)
                 .where(conditions)
+                .select(auction.countDistinct())
                 .fetchOne();
 
-        return new PageImpl<>(newContent, pageable, total != null ? total : 0L);
+        return new PageImpl<>(auctions, pageable, total != null ? total : 0L);
     }
 }

@@ -136,9 +136,9 @@ public class AuctionService {
     }
 
     @Transactional(readOnly = true)
-    public Page<GetAuctionResponseWithRating> getNearestClosingAuctionsByCategoryWithRating(Pageable pageable, String itemCategory) {
+    public Page<GetAuctionResponse> getNearestClosingAuctionsByCategoryWithLikeAndFollow(Pageable pageable, String itemCategory) {
         return auctionCustomRepository.
-                findNearestClosingAuctionsByCategoryWithRating(pageable, ItemCategory.findByDisplayName(itemCategory))
-                .map(GetAuctionResponseWithRating::fromTuple);
+                getNearestClosingAuctionsByCategoryWithLikeAndFollow(pageable, ItemCategory.findByDisplayName(itemCategory))
+                .map(GetAuctionResponse::from);
     }
 }
