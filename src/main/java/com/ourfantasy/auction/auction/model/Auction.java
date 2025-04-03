@@ -118,4 +118,11 @@ public class Auction extends BaseTimeEntity {
     public void setHighestBidPrice(Long highestBidPrice) {
         this.highestBidPrice = highestBidPrice;
     }
+
+    public void activate() {
+        if (this.status == AuctionStatus.ACTIVE) {
+            throw new CustomException(ResponseCode.AUCTION_NOT_ACTIVE);
+        }
+        this.status = AuctionStatus.ACTIVE;
+    }
 }

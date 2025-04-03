@@ -9,31 +9,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "bidding")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Bidding extends BaseTimeEntity {
+public class AuctionLike extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 좋아요를 한 사람
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    // 좋아요 대상 경매
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_id", nullable = false)
     private Auction auction;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bidder_id", nullable = false)
-    private User bidder;
-
-    @Column(nullable = false)
-    private Long bidPrice;
-
-
     @Builder
-    public Bidding(Auction auction, User bidder, Long bidPrice) {
+    public AuctionLike(User user, Auction auction) {
+        this.user = user;
         this.auction = auction;
-        this.bidder = bidder;
-        this.bidPrice = bidPrice;
     }
 
 }
