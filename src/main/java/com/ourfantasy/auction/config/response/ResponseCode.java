@@ -30,6 +30,8 @@ public enum ResponseCode {
     INVALID_STARTING_PRICE("1009", "경매 시작가는 0 이상이어야 합니다"),
     INVALID_MINIMUM_BID_INCREMENT("1010", "최소 입찰 증가액은 0 이상이어야 합니다"),
     ITEM_NOT_OWNED("1011", "아이템의 소유주만 경매를 시작할 수 있습니다"),
+    AUCTION_ALREADY_ACTIVE("1012", "이미 활성화된 경매입니다"),
+
 
     // 입찰 관련 오류 코드 (2000번대)
     BID_AMOUNT_TOO_LOW("2001", "입찰 금액이 너무 낮습니다"),

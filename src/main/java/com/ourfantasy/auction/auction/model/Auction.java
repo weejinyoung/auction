@@ -121,7 +121,7 @@ public class Auction extends BaseTimeEntity {
 
     public void activate() {
         if (this.status == AuctionStatus.ACTIVE) {
-            throw new CustomException(ResponseCode.AUCTION_NOT_ACTIVE);
+            throw new CustomException(ResponseCode.AUCTION_ALREADY_ACTIVE);
         }
         this.status = AuctionStatus.ACTIVE;
     }
