@@ -7,8 +7,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @Getter
+@Table(
+        name = "user_follow",
+        indexes = {
+                @Index(name = "idx_follower_id", columnList = "follower_id"),
+                @Index(name = "idx_followee_id", columnList = "followee_id"),
+                @Index(name = "idx_unique_follower_followee", columnList = "follower_id, followee_id", unique = true)
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserFollow extends BaseTimeEntity {
     @Id
