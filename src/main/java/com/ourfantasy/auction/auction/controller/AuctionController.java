@@ -58,5 +58,14 @@ public class AuctionController {
 //    ) {
 //        return auctionService.getNearestClosingAuctionsByCategoryWithRating(pageable, itemCategory);
 //    }
+
+    @GetMapping("/nearest-closing-with-like-and-follow/{itemCategory}")
+    @Operation(summary = "종료 시간이 임박한 경매 리스트 조회(좋아요+팔로우 포함)", description = "종료 시간이 임박한 경매 리스트를 좋아요 수와 팔로워 수를 포함하여 조회하는 API 입니다. 특정 카테고리의 경매를 필터링할 수 있습니다.")
+    public Page<GetAuctionResponseWithLikeAndFollow> getNearestClosingAuctionsByCategoryWithLikeAndFollow(
+            @PageableDefault(size = 10, sort = "closingAt") Pageable pageable,
+            @PathVariable String itemCategory
+    ){
+        return auctionService.getNearestClosingAuctionsByCategoryWithLikeAndFollow(pageable, itemCategory);
+    }
 }
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
