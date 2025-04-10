@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
         name = "auction_like",
         indexes = {
                 @Index(name = "idx_auction_id", columnList = "auction_id"),
-                @Index(name = "idx_user_id", columnList = "user_id"),
-                @Index(name = "idx_unique_user_auction", columnList = "user_id, auction_id", unique = true)
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
