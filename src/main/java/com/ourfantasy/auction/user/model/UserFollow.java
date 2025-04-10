@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
         indexes = {
                 @Index(name = "idx_follower_id", columnList = "follower_id"),
                 @Index(name = "idx_followee_id", columnList = "followee_id"),
-                @Index(name = "idx_unique_follower_followee", columnList = "follower_id, followee_id", unique = true)
         }
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
