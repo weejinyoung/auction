@@ -3,6 +3,8 @@ package com.ourfantasy.auction.auction.repository;
 import com.ourfantasy.auction.auction.model.Auction;
 import com.ourfantasy.auction.auction.model.AuctionLike;
 import com.ourfantasy.auction.auction.model.Bidding;
+import com.ourfantasy.auction.auction.service.dto.AuctionWithCountsProjection;
+import com.ourfantasy.auction.auction.service.dto.GetAuctionResponseWithLikeAndFollow;
 import com.ourfantasy.auction.item.model.Item;
 import com.ourfantasy.auction.item.model.ItemCategory;
 import com.ourfantasy.auction.user.model.User;
@@ -107,7 +109,7 @@ class AuctionRepositoryWithLikeAndFollowTest {
 
         // when
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Auction> result = auctionQueryRepository
+        Page<AuctionWithCountsProjection> result = auctionQueryRepository
                 .getNearestClosingAuctionsByCategoryWithLikeAndFollow(pageable, ItemCategory.CLOTHING);
 
         // then
@@ -115,10 +117,10 @@ class AuctionRepositoryWithLikeAndFollowTest {
         assertThat(result.getTotalElements()).isEqualTo(2);
 
         // 입찰 수 기준 정렬 -> auction2가 먼저 나와야 함
-        assertThat(result.getContent().get(0).getId()).isEqualTo(auction2.getId());
+        assertThat(result.getContent().get(0).auction().getId()).isEqualTo(auction2.getId());
 
         // 로그
         result.getContent().forEach(a ->
-                System.out.println("경매 ID: " + a.getId() + ", 아이템명: " + a.getItem().getName()));
+                System.out.println("경매 ID: " + a.auction().getId() + ", 아이템명: " + a.auction().getItem().getName()));
     }
 }

@@ -10,6 +10,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(
+        name = "auction_like",
+        indexes = {
+                @Index(name = "idx_auction_id", columnList = "auction_id"),
+        }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AuctionLike extends BaseTimeEntity {
     @Id

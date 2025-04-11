@@ -22,34 +22,59 @@ public class UserFollowDataInitializerByTest {
 
     private final Random random = new Random();
 
-    @Test
-    @DisplayName("유저 간의 팔로우 관계 더미 데이터 생성 (1명당 10~1000명)")
-    public void generateUserFollowRelations() {
-        List<User> allUsers = userRepository.findAll();
+    private static final int BATCH_SIZE = 10_000;
 
-        List<UserFollow> follows = new ArrayList<>();
+    @Test
+    @DisplayName("유저 간의 팔로우 관계 더미 데이터 생성 (1명당 10~300명)")
+    public void generateUserFollowRelations() {
+        long startTime = System.currentTimeMillis();
+        System.out.println("팔로우 관계 생성 시작...");
+
+        List<User> allUsers = userRepository.findAll();
+        List<UserFollow> follows = new ArrayList<>(BATCH_SIZE);
+
+        int processedUsers = 0;
+        long totalFollows = 0;
 
         for (User follower : allUsers) {
-            Set<Long> followeeIds = new HashSet<>();
+            // 후보 리스트를 복사해서 섞은 뒤 본인을 제외
+            List<User> candidates = new ArrayList<>(allUsers);
+            candidates.remove(follower);
+            Collections.shuffle(candidates);
 
-            // 각 유저가 팔로우할 수 있는 수: 최소 10 ~ 최대 300
-            int followCount = random.nextInt(300) + 10;  // (0~290) + 10 → 10~300
+            int followCount = random.nextInt(291) + 10; // 10~300
+            List<User> selectedFollowees = candidates.subList(0, Math.min(followCount, candidates.size()));
 
-            for (int i = 0; i < followCount; i++) {
-                User followee;
-                do {
-                    followee = allUsers.get(random.nextInt(allUsers.size()));
-                } while (
-                        followee.getId().equals(follower.getId()) ||  // 자기 자신은 안됨
-                                !followeeIds.add(followee.getId())            // 중복도 안됨
-                );
+            for (User followee : selectedFollowees) {
+                UserFollow follow = new UserFollow(follower, followee);
+                follows.add(follow);
+                totalFollows++;
+            }
 
-                UserFollow userFollow = new UserFollow(follower, followee);
-                follows.add(userFollow);
+            processedUsers++;
+
+            // 일정 개수마다 저장
+            if (follows.size() >= BATCH_SIZE) {
+                userFollowRepository.saveAll(follows);
+                follows.clear();
+                System.out.printf("💾 중간 저장: %d명 유저의 팔로우 생성 완료 (총 %d건)\n", processedUsers, totalFollows);
+            }
+
+            // 진행 로그
+            if (processedUsers % 1000 == 0 || processedUsers == allUsers.size()) {
+                System.out.printf("🔄 진행 중: %d명 처리 완료\n", processedUsers);
             }
         }
 
-        userFollowRepository.saveAll(follows);
-        System.out.printf("✅ 총 %d개의 팔로우 관계 생성 완료\n", follows.size());
+        // 남은 데이터 저장
+        if (!follows.isEmpty()) {
+            userFollowRepository.saveAll(follows);
+        }
+
+        long endTime = System.currentTimeMillis();
+        double elapsedSeconds = (endTime - startTime) / 1000.0;
+
+        System.out.printf("✅ 총 %d개의 팔로우 관계 생성 완료 (소요 시간: %.2f초, 초당 %.1f건)\n",
+                totalFollows, elapsedSeconds, totalFollows / elapsedSeconds);
     }
 }
